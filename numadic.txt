@@ -1,0 +1,216 @@
+package Numadic;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.time.Duration;
+import java.util.List;
+import java.util.ResourceBundle.Control;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+
+import com.github.dockerjava.api.model.Driver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class careersPage {
+
+	WebDriver driver = null;
+
+	@BeforeTest
+	public void preCondition() {
+		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver();
+
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		String URL = "https://jobs.numadic.com/jobs/Careers";
+		driver.get(URL);
+	}
+
+	@Test
+	public void VerifyHeaderName() {
+
+		// Identify Required WebElement
+		WebElement headerElement = driver.findElement(By.cssSelector("[data-zrqa=\"cw-bg2-stitle\"]"));
+
+		String actualHeader = headerElement.getText();
+		String expectedHeader = "JOIN OUR CREW";
+
+		Assert.assertEquals(actualHeader, expectedHeader);
+
+	}
+
+	@Test
+	public void VerifySelectEngineeringDropdown() throws InterruptedException, AWTException {
+		
+		SoftAssert softAssert = new SoftAssert();
+
+		WebElement filterBox = driver.findElement(By.cssSelector("[role='combobox']"));
+		Actions actions = new Actions(driver);
+		actions.moveToElement(filterBox).click();
+		actions.build().perform();
+	
+		
+		// Required Dropdown Element
+		List<WebElement> allOptions = driver.findElements(By.cssSelector("[role=\"option\"]"));
+
+		String option = "Engineering";
+
+		for (int i = 0; i < allOptions.size(); i++) {
+
+			if (allOptions.get(i).getText().contains(option)) {
+
+				allOptions.get(i).click();
+
+				System.out.println("clicked");
+				break;
+			}
+
+		}
+
+		// Identify QA Engineer Element
+		WebElement qa = driver.findElement(By.xpath("//*[text()='QA Engineer']"));
+		qa.click();
+		
+		//validate Title of Page
+		String actualTitle = driver.getTitle();
+		System.out.println("Actual Title : "+actualTitle );
+		String expectedTitle = "Numadic Iot Pvt. Ltd. - QA Engineer in";
+		System.out.println("expected Title : "+expectedTitle );
+
+		Assert.assertEquals(actualTitle, expectedTitle);
+		
+		//Identify I am Interested Element
+		WebElement amInterestedBtn = driver.findElement(By.xpath("//lyte-yield[@yield-name=\"text\" and text()=\"I'm interested\"]"));
+		
+		//validation of InterestedButton
+		boolean res = amInterestedBtn.isDisplayed();
+		Assert.assertTrue(res);
+		
+		//clicking 
+		amInterestedBtn.click();
+		
+		//Filling application Form
+		
+		Thread.sleep(5000);
+		
+		WebElement prefixField = driver.findElement(By.xpath("(//span[@class=\"lyteDropPlaceholderNormal\"])[1]"));
+		prefixField.click();
+		
+		WebElement selectMr = driver.findElement(By.cssSelector("[data-zcqa=\"Salutation_Mr.\"]"));
+		selectMr.click();
+		
+		WebElement firstName = driver.findElement(By.xpath("//crux-text-component[@data-zcqa=\"rec_First_Name\"]"));
+		actions.moveToElement(firstName).click();
+		firstName.sendKeys("Prashant");
+		
+		WebElement lastName = driver.findElement(By.xpath("//crux-text-component[@data-zcqa=\"rec_Last_Name\"]"));
+		lastName.sendKeys("Narkhede");
+		
+		WebElement emailField = driver.findElement(By.xpath("//lyte-input[@data-zcqa=\"manual_Email\"]"));
+		emailField.sendKeys("prashantnarkhede756@gmail.com");
+		
+		WebElement mobileField = driver.findElement(By.xpath("//lyte-input[@data-zcqa=\"manual_Mobile\"]"));
+		mobileField.sendKeys("7030813829");
+		
+		WebElement streetField = driver.findElement(By.xpath("//lyte-input[@data-zcqa=\"manual_Street\"]"));
+		streetField.sendKeys("MG Road");
+		
+		WebElement cityField = driver.findElement(By.xpath("(//lyte-input[@class=\"lyteInputBox vertical cxBoxInput crc-form-textfield\"])[1]"));
+		cityField.sendKeys("Jalgaon" + Keys.ENTER);
+		Thread.sleep(3000);
+		
+		WebElement stateField = driver.findElement(By.xpath("(//lyte-input[@class=\"lyteInputBox vertical cxBoxInput crc-form-textfield\"])[2]"));
+		stateField.sendKeys("Maharashtra");
+		Thread.sleep(3000);
+		stateField.sendKeys(Keys.ENTER);
+
+		WebElement zipCodeField = driver.findElement(By.xpath("(//lyte-input[@class=\"lyteInputBox vertical cxBoxInput crc-form-textfield\"])[3]"));
+		zipCodeField.sendKeys("425001");
+		Thread.sleep(3000);
+		zipCodeField.sendKeys(Keys.ENTER);
+		
+		WebElement countryField = driver.findElement(By.cssSelector("[data-zcqa=\"manual_Country\"]"));
+		countryField.sendKeys("India");
+		
+		Thread.sleep(3000);
+		WebElement currentEmployerField = driver.findElement(By.cssSelector("[data-zcqa=\"manual_Current_Employer\"]"));
+		currentEmployerField.sendKeys("ABC Pvt Ltd");
+		
+		Thread.sleep(3000);
+		WebElement currentJobTitleDropdown = driver.findElement(By.cssSelector("[data-zcqa=\"manual_Current_Job_Title\"]"));
+		currentJobTitleDropdown.click();
+		
+		WebElement selectFresher = driver.findElement(By.cssSelector("[data-value=\"Fresher\"]"));
+		selectFresher.click();
+		
+		Thread.sleep(3000);
+		WebElement skillSetField= driver.findElement(By.cssSelector("[data-zcqa=\"skillsTagAddSkills\"]"));
+		skillSetField.sendKeys("Selenium");
+		Thread.sleep(3000);
+		skillSetField.sendKeys(Keys.ENTER);
+		
+		Thread.sleep(3000);
+		WebElement currentCTC_Field= driver.findElement(By.cssSelector("[data-zcqa=\"manual_Current_CTC\"]"));
+		currentCTC_Field.sendKeys("420000");
+	
+		Thread.sleep(3000);
+		WebElement expectedCTC_Field= driver.findElement(By.cssSelector("[data-zcqa=\"manual_Expected_CTC\"]"));
+		expectedCTC_Field.sendKeys("800000");
+		
+		WebElement noticePeriodField = driver.findElement(By.cssSelector("[data-zcqa=\"manual_Notice_Period\"]"));
+		noticePeriodField.sendKeys("");
+		
+		Thread.sleep(3000);
+		WebElement reasonOfChangeField= driver.findElement(By.cssSelector("[data-zcqa=\"manual_Reason_for_change\"]"));
+		reasonOfChangeField.sendKeys("career growth");
+		
+		Thread.sleep(3000);
+		WebElement joinNumadicField= driver.findElement(By.cssSelector("[data-zcqa=\"manual_Why_Join_Numadic\"]"));
+		joinNumadicField.sendKeys("There is lot of Potential to learn New Technologies");
+		
+		Thread.sleep(3000);
+		WebElement linkedInInputField= driver.findElement(By.xpath("//crux-website-component[@cx-prop-zcqa=\"manual_$LinkedIn\"]"));
+		linkedInInputField.sendKeys("https://www.linkedin.com/in/prashant-narkhede-618880259");
+		
+		Thread.sleep(3000);
+		WebElement browseField= driver.findElement(By.xpath("(//lyte-file-message/span[@class=\"lyteFileUpdMsg\"])[2]"));
+		browseField.click();
+		
+		
+		StringSelection ss = new StringSelection("Prashant_Narkhede-QA.pdf");
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+		
+		Robot robot = new Robot();
+		robot.keyPress(KeyEvent.VK_CONTROL);
+		robot.keyPress(KeyEvent.VK_V);
+		
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+		robot.keyRelease(KeyEvent.VK_V);
+
+		
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);
+		
+		WebElement submitButton= driver.findElement(By.xpath("//*[text()='Submit Application']"));
+		submitButton.click();
+		
+			
+	}
+
+}
